@@ -1,0 +1,144 @@
+{
+  "restaurants": [
+    {
+      "id": 1,
+      "name": "Restaurant 1",
+      "logoUrl": "Logo",
+      "cuisine": ["cuisine 1", "cuisine 2"],
+      "address": "address 1",
+      "coordinate": "coordinate 1",
+      "contactNumber": "contactNumber 1",
+      "openingHours": "opening hours 1",
+      "available": true,
+      "capacity": 50,
+      "mainImagesUrl": ["image 1", "image 2"],
+      "food": [
+        {
+          "id": 1,
+          "restaurantId": 1,
+          "name": "food 1",
+          "category": {
+            "name": "category 1"
+          },
+          "price": 10000,
+          "imagesUrl": ["food image 1", "food image 2", "food image 3"],
+          "description": "description 1",
+          "available": "true"
+        },
+        {
+          "id": 2,
+          "restaurantId": 1,
+          "name": "food 2",
+          "category": {
+            "name": "category 1"
+          },
+          "price": 10000,
+          "imagesUrl": ["food image 1", "food image 2", "food image 3"],
+          "description": "description 2",
+          "available": "true"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Restaurant 2",
+      "logoUrl": "Logo",
+      "cuisine": ["cuisine 1", "cuisine 2"],
+      "address": "address 2",
+      "coordinate": "coordinate 2",
+      "contactNumber": "contactNumber 2",
+      "openingHours": "opening hours 2",
+      "available": true,
+      "capacity": 50,
+      "mainImagesUrl": ["image 1", "image 2"],
+      "food": [
+        {
+          "id": 3,
+          "restaurantId": 2,
+          "name": "food 3",
+          "category": {
+            "name": "category 2"
+          },
+          "price": 100000,
+          "imagesUrl": ["food image 1", "food image 2", "food image 3"],
+          "description": "description 3",
+          "available": "true"
+        },
+        {
+          "id": 4,
+          "restaurantId": 2,
+          "name": "food 4",
+          "category": {
+            "name": "category 2"
+          },
+          "price": 50000,
+          "imagesUrl": ["food image 1", "food image 2", "food image 3"],
+          "description": "description 4",
+          "available": "true"
+        }
+      ]
+    }
+  ],
+  "food": [
+    [
+      {
+        "id": 1,
+        "restaurantId": 1,
+        "name": "food 1",
+        "category": {
+          "name": "category 1"
+        },
+        "price": 10000,
+        "imagesUrl": ["food image 1", "food image 2", "food image 3"],
+        "description": "description 1",
+        "available": "true"
+      },
+      {
+        "id": 2,
+        "restaurantId": 1,
+        "name": "food 2",
+        "category": {
+          "name": "category 1"
+        },
+        "price": 10000,
+        "imagesUrl": ["food image 1", "food image 2", "food image 3"],
+        "description": "description 2",
+        "available": "true"
+      },
+      {
+        "id": 3,
+        "restaurantId": 2,
+        "name": "food 3",
+        "category": {
+          "name": "category 2"
+        },
+        "price": 100000,
+        "imagesUrl": ["food image 1", "food image 2", "food image 3"],
+        "description": "description 3",
+        "available": "true"
+      },
+      {
+        "id": 4,
+        "restaurantId": 2,
+        "name": "food 4",
+        "category": {
+          "name": "category 2"
+        },
+        "price": 50000,
+        "imagesUrl": ["food image 1", "food image 2", "food image 3"],
+        "description": "description 4",
+        "available": "true"
+      }
+    ]
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "category 1"
+    },
+    {
+      "id": 2,
+      "name": "category 2"
+    }
+  ]
+}
