@@ -1,0 +1,27 @@
+{
+  "name": "antreee-orchestrator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Antreee/Antreee-Orchestrator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Antreee/Antreee-Orchestrator/issues"
+  },
+  "homepage": "https://github.com/Antreee/Antreee-Orchestrator#readme",
+  "dependencies": {
+    "apollo-server": "^3.6.7",
+    "axios": "^0.26.1",
+    "dotenv": "^16.0.0",
+    "graphql": "^16.3.0",
+    "ioredis": "^5.0.4"
+  }
+}
