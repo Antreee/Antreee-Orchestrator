@@ -68,11 +68,21 @@ const typeDefs = gql`
     restaurants: [Restaurant]
     restaurant(id: ID!): Restaurant
     items: [Item]
-    item(id: ID!): Item
     orderDetails(orderId: Int!): [OrderDetail]
     orders(customerName: String!): [Order]
     favourites(customerId: Int!): [FavouriteRestaurant]
     userProfile(id: ID!): UserProfile
+  }
+  type Mutation {
+    createOrder(
+      customerName: String
+      customerPhoneNumber: String
+      tableNumber: String
+      totalPrice: Int
+      bookingDate: String
+      numberOfPeople: Int
+      status: String
+    ): Order
   }
 `;
 const resolvers = {
@@ -106,17 +116,6 @@ const resolvers = {
           method: "GET",
         });
         return items;
-      } catch (error) {
-        console.log(error.response.data);
-      }
-    },
-    item: async (_, args) => {
-      try {
-        const { data: item } = await axios({
-          url: `http://localhost:3000/items/${args.id}`,
-          method: "GET",
-        });
-        return item;
       } catch (error) {
         console.log(error.response.data);
       }
@@ -170,6 +169,38 @@ const resolvers = {
           method: "GET",
         });
         return userProfile;
+      } catch (error) {
+        console.log(error.response.data);
+      }
+    },
+  },
+  Mutation: {
+    createOrder: async (_, args) => {
+      try {
+        const {
+          customerName,
+          customerPhoneNumber,
+          tableNumber,
+          totalPrice,
+          bookingDate,
+          numberOfPeople,
+          status,
+        } = args;
+
+        const { data: orders } = await axios({
+          url: "http://localhost:3000/orders",
+          method: "POST",
+          data: {
+            customerName,
+            customerPhoneNumber,
+            tableNumber,
+            totalPrice,
+            bookingDate,
+            numberOfPeople,
+            status,
+          },
+        });
+        return orders;
       } catch (error) {
         console.log(error.response.data);
       }

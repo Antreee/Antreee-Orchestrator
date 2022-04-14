@@ -4,28 +4,40 @@
       "id": 1,
       "name": "Restaurant 1",
       "logoUrl": "Logo",
-      "cuisine": ["cuisine 1", "cuisine 2"],
+      "cuisine": [
+        "cuisine 1",
+        "cuisine 2"
+      ],
       "address": "address 1",
       "coordinate": "coordinate 1",
       "contactNumber": "contactNumber 1",
       "openingHours": "opening hours 1",
       "available": true,
       "capacity": 50,
-      "mainImagesUrl": ["image 1", "image 2"],
+      "mainImagesUrl": [
+        "image 1",
+        "image 2"
+      ],
       "adminId": 2
     },
     {
       "id": 2,
       "name": "Restaurant 2",
       "logoUrl": "Logo",
-      "cuisine": ["cuisine 1", "cuisine 2"],
+      "cuisine": [
+        "cuisine 1",
+        "cuisine 2"
+      ],
       "address": "address 2",
       "coordinate": "coordinate 2",
       "contactNumber": "contactNumber 2",
       "openingHours": "opening hours 2",
       "available": true,
       "capacity": 50,
-      "mainImagesUrl": ["image 1", "image 2"],
+      "mainImagesUrl": [
+        "image 1",
+        "image 2"
+      ],
       "adminId": 2
     }
   ],
@@ -36,7 +48,11 @@
       "name": "food 1",
       "category": "category 1",
       "price": 10000,
-      "imagesUrl": ["food image 1", "food image 2", "food image 3"],
+      "imagesUrl": [
+        "food image 1",
+        "food image 2",
+        "food image 3"
+      ],
       "description": "description 1",
       "available": true
     },
@@ -46,7 +62,11 @@
       "name": "food 2",
       "category": "category 1",
       "price": 10000,
-      "imagesUrl": ["food image 1", "food image 2", "food image 3"],
+      "imagesUrl": [
+        "food image 1",
+        "food image 2",
+        "food image 3"
+      ],
       "description": "description 2",
       "available": true
     },
@@ -56,7 +76,11 @@
       "name": "food 3",
       "category": "category 2",
       "price": 100000,
-      "imagesUrl": ["food image 1", "food image 2", "food image 3"],
+      "imagesUrl": [
+        "food image 1",
+        "food image 2",
+        "food image 3"
+      ],
       "description": "description 3",
       "available": true
     },
@@ -66,7 +90,11 @@
       "name": "food 4",
       "category": "category 2",
       "price": 50000,
-      "imagesUrl": ["food image 1", "food image 2", "food image 3"],
+      "imagesUrl": [
+        "food image 1",
+        "food image 2",
+        "food image 3"
+      ],
       "description": "description 4",
       "available": true
     }
@@ -117,6 +145,16 @@
       "bookingDate": "2022-04-15",
       "numberOfPeople": 6,
       "status": "Booked"
+    },
+    {
+      "customerName": "test",
+      "customerPhoneNumber": "test",
+      "tableNumber": "test",
+      "totalPrice": 1000,
+      "bookingDate": "test",
+      "numberOfPeople": 6,
+      "status": "test",
+      "id": 3
     }
   ],
   "favouriteRestaurants": [
