@@ -11,37 +11,39 @@ const PORT = process.env.PORT || 4000;
 
 const typeDefs = gql`
   type Restaurant {
-    id: ID
+    _id: String
     name: String
     logoUrl: String
     cuisine: [String]
     address: String
-    coordinate: String
     contactNumber: String
-    openingHours: String
+    location: Location
     available: Boolean
     capacity: Int
     mainImagesUrl: [String]
-    adminId: Int
+    adminId: String
+  }
+  type Location {
+    type: String
+    coordinates: [Float]
   }
   type Item {
-    id: ID
-    restaurantId: Int
+    _id: String
+    restaurant_Id: String
     name: String
     price: Int
     category: String
-    imagesUrl: [String]
+    imageUrl: String
     description: String
-    available: Boolean
   }
   type OrderDetail {
-    id: ID
-    orderId: Int
-    foodId: Int
+    _id: String
+    orderId: String
+    foodId: String
     quantity: Int
   }
   type Order {
-    id: ID
+    _id: String
     customerName: String
     customerPhoneNumber: String
     tableNumber: String
@@ -56,7 +58,7 @@ const typeDefs = gql`
     restaurantId: String
   }
   type UserProfile {
-    id: ID
+    _id: String
     fullName: String
     email: String
     password: String
@@ -64,14 +66,20 @@ const typeDefs = gql`
     profilePicture: String
     role: String
   }
+  type Info {
+    message: String
+  }
+  type InputDetail {
+    foodId: Int
+  }
   type Query {
     restaurants: [Restaurant]
-    restaurant(id: ID!): Restaurant
+    restaurant(_id: ID!): Restaurant
     items: [Item]
-    orderDetails(orderId: Int!): [OrderDetail]
+    orderDetails(orderId: String!): [OrderDetail]
     orders(customerName: String!): [Order]
-    favourites(customerId: Int!): [FavouriteRestaurant]
-    userProfile(id: ID!): UserProfile
+    favourites(customerId: String!): [FavouriteRestaurant]
+    userProfile(_id: String!): UserProfile
   }
   type Mutation {
     createOrder(
@@ -81,8 +89,7 @@ const typeDefs = gql`
       totalPrice: Int
       bookingDate: String
       numberOfPeople: Int
-      status: String
-    ): Order
+    ): Info
   }
 `;
 const resolvers = {
@@ -101,10 +108,13 @@ const resolvers = {
     restaurant: async (_, args) => {
       try {
         const { data: restaurant } = await axios({
-          url: `http://localhost:3000/restaurants/${args.id}`,
+          url: `http://localhost:3000/restaurants`,
           method: "GET",
+          params: {
+            _id: args._id,
+          },
         });
-        return restaurant;
+        return restaurant[0];
       } catch (error) {
         console.log(error.response.data);
       }
@@ -165,7 +175,7 @@ const resolvers = {
     userProfile: async (_, args) => {
       try {
         const { data: userProfile } = await axios({
-          url: `http://localhost:3000/userProfiles/${args.id}`,
+          url: `http://localhost:3000/userProfiles/${args._id}`,
           method: "GET",
         });
         return userProfile;
@@ -184,7 +194,7 @@ const resolvers = {
           totalPrice,
           bookingDate,
           numberOfPeople,
-          status,
+          orderDetails,
         } = args;
 
         const { data: orders } = await axios({
