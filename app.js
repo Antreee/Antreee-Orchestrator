@@ -69,8 +69,12 @@ const typeDefs = gql`
   type Info {
     message: String
   }
-  type InputDetail {
-    foodId: Int
+  input InputDetail {
+    foodId: String
+    quantity: Int
+  }
+  input OrderDetails {
+    data: [InputDetail]
   }
   type Query {
     restaurants: [Restaurant]
@@ -89,6 +93,7 @@ const typeDefs = gql`
       totalPrice: Int
       bookingDate: String
       numberOfPeople: Int
+      orderDetails: OrderDetails
     ): Info
   }
 `;
@@ -196,21 +201,24 @@ const resolvers = {
           numberOfPeople,
           orderDetails,
         } = args;
+        console.log(JSON.stringify(args, null, 2));
 
-        const { data: orders } = await axios({
-          url: "http://localhost:3000/orders",
-          method: "POST",
-          data: {
-            customerName,
-            customerPhoneNumber,
-            tableNumber,
-            totalPrice,
-            bookingDate,
-            numberOfPeople,
-            status,
-          },
-        });
-        return orders;
+        // const { data: orders } = await axios({
+        //   url: "http://localhost:3000/orders",
+        //   method: "POST",
+        //   data: {
+        //     customerName,
+        //     customerPhoneNumber,
+        //     tableNumber,
+        //     totalPrice,
+        //     bookingDate,
+        //     numberOfPeople,
+        //   },
+        // });
+        const balikan = {
+          message: JSON.stringify(args, null, 2),
+        };
+        return balikan;
       } catch (error) {
         console.log(error.response.data);
       }
