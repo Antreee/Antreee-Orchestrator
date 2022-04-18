@@ -70,6 +70,10 @@ const typeDefs = gql`
   type Info {
     message: String
   }
+  type MessageLogin {
+    status: String
+    access_token: String
+  }
   input InputDetail {
     itemId: String
     quantity: Int
@@ -86,6 +90,7 @@ const typeDefs = gql`
     orders(customerName: String!): [Order]
     favourites(customerId: String!): [FavouriteRestaurant]
     userProfile(_id: String!): UserProfile
+    getRestaurantByAdmin: [Restaurant]
   }
   type Mutation {
     createOrder(
@@ -98,6 +103,8 @@ const typeDefs = gql`
       numberOfPeople: Int
       orderDetails: OrderDetails
     ): Info
+
+    login(email: String, password: String): MessageLogin
   }
 `;
 const resolvers = {
@@ -144,6 +151,8 @@ const resolvers = {
           url: `http://localhost:3000/restaurants/${args._id}/items`,
           method: "GET",
         });
+
+        console.log("itemsByRestaurantId", itemsByRestaurantId);
 
         return itemsByRestaurantId.item;
       } catch (error) {
@@ -203,40 +212,69 @@ const resolvers = {
         console.log(error.response.data);
       }
     },
+
+    getRestaurantByAdmin: async (_, args) => {
+      try {
+        const { data: restaurant } = await axios({
+          url: `http://localhost:3000/restaurants/admin`,
+          method: "GET",
+          headers: {
+            access_token:
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNTkxNDcyYzk4NTQ5N2JjYTAyOWY2ZiIsImVtYWlsIjoiZG9taW5vQGFkbWluLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTY1MDIwODY0N30.SV-myJNK5A9NZ3LQxNxrOHRWPaJoO-0JOb8Yqq004f4",
+          },
+        });
+        return restaurant;
+
+      } catch (error) {
+        console.log(error.response.data);
+      }
+    },
   },
   Mutation: {
     createOrder: async (_, args) => {
       try {
         console.log(args);
-        // const {
-        //   customerName,
-        //   customerEmail,
-        //   customerPhoneNumber,
-        //   tableNumber,
-        //   totalPrice,
-        //   bookingDate,
-        //   numberOfPeople,
-        //   orderDetails,
-        // } = args
-        // const { data: response } = await axios({
-        //   url: 'http://localhost:3000/customers/orders',
-        //   method: 'POST',
-        //   data: {
-        //     customerName,
-        //     customerEmail,
-        //     customerPhoneNumber,
-        //     tableNumber,
-        //     totalPrice,
-        //     bookingDate,
-        //     numberOfPeople,
-        //     orderDetails: orderDetails.data,
-        //   },
-        // })
-        // return { message: response }
-
-        return { message: "Sukses" };
+        const {
+          customerName,
+          customerPhoneNumber,
+          tableNumber,
+          totalPrice,
+          bookingDate,
+          numberOfPeople,
+          orderDetails,
+        } = args;
+        const { data: response } = await axios({
+          url: "http://localhost:3000/customers/orders",
+          method: "POST",
+          data: {
+            customerName,
+            customerPhoneNumber,
+            tableNumber,
+            totalPrice,
+            bookingDate,
+            numberOfPeople,
+            orderDetails: orderDetails.data,
+          },
+        });
+        return { message: response };
       } catch (error) {
         console.log(error.response.data);
+      }
+    },
+    login: async (_, args) => {
+      try {
+        const { email, password } = args;
+        const { data: response } = await axios({
+          url: "http://localhost:3000/admin/login",
+          method: "POST",
+          data: {
+            email,
+            password,
+          },
+        });
+        return { status: response.status, access_token: response.access_token };
+      } catch (error) {
+        throw error
       }
     },
   },
