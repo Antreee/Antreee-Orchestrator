@@ -15,6 +15,7 @@ const context = async ({ req }) => {
 };
 
 const typeDefs = gql`
+
 	type Restaurant {
 		_id: String
 		name: String
@@ -86,17 +87,17 @@ const typeDefs = gql`
 	input OrderDetails {
 		data: [InputDetail]
 	}
-	type Query {
-		restaurants: [Restaurant]
-		restaurant(_id: ID!): Restaurant
-		items: [Item]
-		itemsByRestaurantId(_id: ID!): [Item]
-		orderDetails(orderId: String!): [OrderDetail]
-		orders(customerName: String!): [Order]
-		favourites(customerId: String!): [FavouriteRestaurant]
-		userProfile(_id: String!): UserProfile
-		getRestaurantByAdmin: [Restaurant]
-	}
+	type Query{
+    restaurants(stringCoordinates: String): [Restaurant]
+    restaurant(_id: ID!): Restaurant
+    items: [Item]
+    itemsByRestaurantId(_id: ID!): [Item]
+    orderDetails(orderId: String!): [OrderDetail]
+    orders(customerName: String!): [Order]
+    favourites(customerId: String!): [FavouriteRestaurant]
+    userProfile(_id: String!): UserProfile
+    getRestaurantByAdmin: [Restaurant]
+  }
 	type Mutation {
 		createOrder(
 			customerName: String
@@ -114,20 +115,20 @@ const typeDefs = gql`
 `;
 const resolvers = {
 	Query: {
-		restaurants: async () => {
-			try {
-				const { data: restaurants } = await axios({
-					url: "http://localhost:3000/restaurants",
-					method: "GET",
-					headers: {
-						coordinates: [98.697683, 3.631794],
-					},
-				});
-				return restaurants;
-			} catch (error) {
-				console.log(error.response.data);
-			}
-		},
+    restaurants: async (_, args) => {
+      try {
+        const { data: restaurants } = await axios({
+          url: "http://localhost:3000/restaurants",
+          method: "GET",
+          headers: {
+            coordinates: args.stringCoordinates,
+          },
+        });
+        return restaurants;
+      } catch (error) {
+        console.log(error.response.data);
+      }
+    },
 		restaurant: async (_, args) => {
 			try {
 				const { data: restaurant } = await axios({
@@ -218,8 +219,7 @@ const resolvers = {
 				console.log(error.response.data);
 			}
 		},
-
-		getRestaurantByAdmin: async (_, args, context) => {
+   getRestaurantByAdmin: async (_, args, context) => {
 			try {
 				console.log(context);
 				const { data: restaurant } = await axios({
@@ -236,36 +236,38 @@ const resolvers = {
 		},
 	},
 	Mutation: {
-		createOrder: async (_, args) => {
-			try {
-				console.log(args);
-				const {
-					customerName,
-					customerPhoneNumber,
-					tableNumber,
-					totalPrice,
-					bookingDate,
-					numberOfPeople,
-					orderDetails,
-				} = args;
-				const { data: response } = await axios({
-					url: "http://localhost:3000/customers/orders",
-					method: "POST",
-					data: {
-						customerName,
-						customerPhoneNumber,
-						tableNumber,
-						totalPrice,
-						bookingDate,
-						numberOfPeople,
-						orderDetails: orderDetails.data,
-					},
-				});
-				return { message: response };
-			} catch (error) {
-				console.log(error.response.data);
-			}
-		},
+    createOrder: async (_, args) => {
+      try {
+        console.log(args);
+        const {
+          customerName,
+          customerPhoneNumber,
+          customerEmail,
+          tableNumber,
+          totalPrice,
+          bookingDate,
+          numberOfPeople,
+          orderDetails,
+        } = args;
+        const { data: response } = await axios({
+          url: "http://localhost:3000/customers/orders",
+          method: "POST",
+          data: {
+            customerName,
+            customerPhoneNumber,
+            customerEmail,
+            tableNumber,
+            totalPrice,
+            bookingDate,
+            numberOfPeople,
+            orderDetails: orderDetails.data,
+          },
+        });
+        return { message: response };
+      } catch (error) {
+        console.log(error.response.data);
+      }
+    },
 		login: async (_, args) => {
 			try {
 				const { email, password } = args;
