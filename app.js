@@ -9,6 +9,11 @@ const PORT = process.env.PORT || 4000;
 //   password: process.env.REDIS_PASSWORD,
 // });
 
+const context = async ({ req }) => {
+	const access_token = await req.headers.authorization;
+	return { access_token };
+};
+
 const typeDefs = gql`
   type Restaurant {
     _id: String
@@ -104,8 +109,8 @@ const typeDefs = gql`
       orderDetails: OrderDetails
     ): Info
 
-    login(email: String, password: String): MessageLogin
-  }
+		login(email: String, password: String): MessageLogin
+	}
 `;
 const resolvers = {
   Query: {
@@ -152,83 +157,82 @@ const resolvers = {
           method: "GET",
         });
 
-        console.log("itemsByRestaurantId", itemsByRestaurantId);
+				console.log("itemsByRestaurantId", itemsByRestaurantId);
 
-        return itemsByRestaurantId.item;
-      } catch (error) {
-        console.log(error.response.data);
-      }
-    },
-    orderDetails: async (_, args) => {
-      try {
-        const { data: orderDetails } = await axios({
-          url: "http://localhost:3000/orderDetails",
-          method: "GET",
-          params: {
-            orderId: args.orderId,
-          },
-        });
-        return orderDetails;
-      } catch (error) {
-        console.log(error.response.data);
-      }
-    },
-    orders: async (_, args) => {
-      try {
-        const { data: orders } = await axios({
-          url: "http://localhost:3000/orders",
-          method: "GET",
-          params: {
-            customerName: args.customerName,
-          },
-        });
-        return orders;
-      } catch (error) {
-        console.log(error.response.data);
-      }
-    },
-    favourites: async (_, args) => {
-      try {
-        const { data: favourites } = await axios({
-          url: "http://localhost:3000/favouriteRestaurants",
-          method: "GET",
-          params: {
-            customerId: args.customerId,
-          },
-        });
-        return favourites;
-      } catch (error) {
-        console.log(error.response.data);
-      }
-    },
-    userProfile: async (_, args) => {
-      try {
-        const { data: userProfile } = await axios({
-          url: `http://localhost:3000/userProfiles/${args._id}`,
-          method: "GET",
-        });
-        return userProfile;
-      } catch (error) {
-        console.log(error.response.data);
-      }
-    },
-
-    getRestaurantByAdmin: async (_, args) => {
-      try {
-        const { data: restaurant } = await axios({
-          url: `http://localhost:3000/restaurants/admin`,
-          method: "GET",
-          headers: {
-            access_token:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNTkxNDcyYzk4NTQ5N2JjYTAyOWY2ZiIsImVtYWlsIjoiZG9taW5vQGFkbWluLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTY1MDIwODY0N30.SV-myJNK5A9NZ3LQxNxrOHRWPaJoO-0JOb8Yqq004f4",
-          },
-        });
-        return restaurant;
-      } catch (error) {
-        console.log(error.response.data);
-      }
-    },
-  },
+				return itemsByRestaurantId.item;
+			} catch (error) {
+				console.log(error.response.data);
+			}
+		},
+		orderDetails: async (_, args) => {
+			try {
+				const { data: orderDetails } = await axios({
+					url: "http://localhost:3000/orderDetails",
+					method: "GET",
+					params: {
+						orderId: args.orderId,
+					},
+				});
+				return orderDetails;
+			} catch (error) {
+				console.log(error.response.data);
+			}
+		},
+		orders: async (_, args) => {
+			try {
+				const { data: orders } = await axios({
+					url: "http://localhost:3000/orders",
+					method: "GET",
+					params: {
+						customerName: args.customerName,
+					},
+				});
+				return orders;
+			} catch (error) {
+				console.log(error.response.data);
+			}
+		},
+		favourites: async (_, args) => {
+			try {
+				const { data: favourites } = await axios({
+					url: "http://localhost:3000/favouriteRestaurants",
+					method: "GET",
+					params: {
+						customerId: args.customerId,
+					},
+				});
+				return favourites;
+			} catch (error) {
+				console.log(error.response.data);
+			}
+		},
+		userProfile: async (_, args) => {
+			try {
+				const { data: userProfile } = await axios({
+					url: `http://localhost:3000/userProfiles/${args._id}`,
+					method: "GET",
+				});
+				return userProfile;
+			} catch (error) {
+				console.log(error.response.data);
+			}
+		},
+   getRestaurantByAdmin: async (_, args, context) => {
+			try {
+				console.log(context);
+				const { data: restaurant } = await axios({
+					url: `http://localhost:3000/restaurants/admin`,
+					method: "GET",
+					headers: {
+						access_token: context.access_token,
+					},
+				});
+				return restaurant;
+			} catch (error) {
+				console.log(error.response.data);
+			}
+		},
+	},
   Mutation: {
     createOrder: async (_, args) => {
       try {
@@ -281,8 +285,12 @@ const resolvers = {
   },
 };
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({
+	typeDefs,
+	resolvers,
+	context,
+});
 
 server.listen(PORT).then(({ url }) => {
-  console.log(`🚀  Server ready at ${url}`);
+	console.log(`🚀  Server ready at ${url}`);
 });
