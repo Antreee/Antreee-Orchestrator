@@ -82,7 +82,7 @@ const typeDefs = gql`
     data: [InputDetail]
   }
   type Query {
-    restaurants: [Restaurant]
+    restaurants(stringCoordinates: String): [Restaurant]
     restaurant(_id: ID!): Restaurant
     items: [Item]
     itemsByRestaurantId(_id: ID!): [Item]
@@ -109,13 +109,13 @@ const typeDefs = gql`
 `;
 const resolvers = {
   Query: {
-    restaurants: async () => {
+    restaurants: async (_, args) => {
       try {
         const { data: restaurants } = await axios({
           url: "http://localhost:3000/restaurants",
           method: "GET",
           headers: {
-            coordinates: [98.697683, 3.631794],
+            coordinates: args.stringCoordinates,
           },
         });
         return restaurants;
@@ -224,7 +224,6 @@ const resolvers = {
           },
         });
         return restaurant;
-
       } catch (error) {
         console.log(error.response.data);
       }
@@ -237,6 +236,7 @@ const resolvers = {
         const {
           customerName,
           customerPhoneNumber,
+          customerEmail,
           tableNumber,
           totalPrice,
           bookingDate,
@@ -249,6 +249,7 @@ const resolvers = {
           data: {
             customerName,
             customerPhoneNumber,
+            customerEmail,
             tableNumber,
             totalPrice,
             bookingDate,
@@ -274,7 +275,7 @@ const resolvers = {
         });
         return { status: response.status, access_token: response.access_token };
       } catch (error) {
-        throw error
+        throw error;
       }
     },
   },
