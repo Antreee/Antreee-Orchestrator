@@ -15,78 +15,79 @@ const context = async ({ req }) => {
 };
 
 const typeDefs = gql`
-  type Restaurant {
-    _id: String
-    name: String
-    logoUrl: String
-    cuisine: [String]
-    address: String
-    contactNumber: String
-    location: Location
-    available: Boolean
-    capacity: Int
-    mainImagesUrl: [String]
-    adminId: String
-    restaurantDistance: Float
-  }
-  type Location {
-    type: String
-    coordinates: [Float]
-  }
-  type Item {
-    _id: String
-    restaurantId: String
-    name: String
-    price: Int
-    categoryItem: String
-    imageUrl: String
-    description: String
-  }
-  type OrderDetail {
-    _id: String
-    orderId: String
-    foodId: String
-    quantity: Int
-  }
-  type Order {
-    _id: String
-    customerName: String
-    customerPhoneNumber: String
-    tableNumber: String
-    totalPrice: Int
-    bookingDate: String
-    numberOfPeople: Int
-    status: String
-  }
-  type FavouriteRestaurant {
-    id: ID
-    customerId: String
-    restaurantId: String
-  }
-  type UserProfile {
-    _id: String
-    fullName: String
-    email: String
-    password: String
-    phoneNumber: String
-    profilePicture: String
-    role: String
-  }
-  type Info {
-    message: String
-  }
-  type MessageLogin {
-    status: String
-    access_token: String
-  }
-  input InputDetail {
-    itemId: String
-    quantity: Int
-  }
-  input OrderDetails {
-    data: [InputDetail]
-  }
-  type Query {
+
+	type Restaurant {
+		_id: String
+		name: String
+		logoUrl: String
+		cuisine: [String]
+		address: String
+		contactNumber: String
+		location: Location
+		available: Boolean
+		capacity: Int
+		mainImagesUrl: [String]
+		adminId: String
+		restaurantDistance: Float
+	}
+	type Location {
+		type: String
+		coordinates: [Float]
+	}
+	type Item {
+		_id: String
+		restaurantId: String
+		name: String
+		price: Int
+		categoryItem: String
+		imageUrl: String
+		description: String
+	}
+	type OrderDetail {
+		_id: String
+		orderId: String
+		foodId: String
+		quantity: Int
+	}
+	type Order {
+		_id: String
+		customerName: String
+		customerPhoneNumber: String
+		tableNumber: String
+		totalPrice: Int
+		bookingDate: String
+		numberOfPeople: Int
+		status: String
+	}
+	type FavouriteRestaurant {
+		id: ID
+		customerId: String
+		restaurantId: String
+	}
+	type UserProfile {
+		_id: String
+		fullName: String
+		email: String
+		password: String
+		phoneNumber: String
+		profilePicture: String
+		role: String
+	}
+	type Info {
+		message: String
+	}
+	type MessageLogin {
+		status: String
+		access_token: String
+	}
+	input InputDetail {
+		itemId: String
+		quantity: Int
+	}
+	input OrderDetails {
+		data: [InputDetail]
+	}
+	type Query{
     restaurants(stringCoordinates: String): [Restaurant]
     restaurant(_id: ID!): Restaurant
     items: [Item]
@@ -97,23 +98,23 @@ const typeDefs = gql`
     userProfile(_id: String!): UserProfile
     getRestaurantByAdmin: [Restaurant]
   }
-  type Mutation {
-    createOrder(
-      customerName: String
-      customerEmail: String
-      customerPhoneNumber: String
-      tableNumber: String
-      totalPrice: Int
-      bookingDate: String
-      numberOfPeople: Int
-      orderDetails: OrderDetails
-    ): Info
-
+	type Mutation {
+		createOrder(
+			customerName: String
+			customerEmail: String
+			customerPhoneNumber: String
+			tableNumber: String
+			totalPrice: Int
+			bookingDate: String
+			numberOfPeople: Int
+			orderDetails: OrderDetails
+		): Info
+		updateAvailability(available: String): Info
 		login(email: String, password: String): MessageLogin
 	}
 `;
 const resolvers = {
-  Query: {
+	Query: {
     restaurants: async (_, args) => {
       try {
         const { data: restaurants } = await axios({
@@ -128,34 +129,35 @@ const resolvers = {
         console.log(error.response.data);
       }
     },
-    restaurant: async (_, args) => {
-      try {
-        const { data: restaurant } = await axios({
-          url: `http://localhost:3000/restaurants/${args._id}`,
-          method: "GET",
-        });
-        return restaurant;
-      } catch (error) {
-        console.log(error.response.data);
-      }
-    },
-    items: async () => {
-      try {
-        const { data: items } = await axios({
-          url: "http://localhost:3000/items",
-          method: "GET",
-        });
-        return items;
-      } catch (error) {
-        console.log(error.response.data);
-      }
-    },
-    itemsByRestaurantId: async (_, args) => {
-      try {
-        const { data: itemsByRestaurantId } = await axios({
-          url: `http://localhost:3000/restaurants/${args._id}/items`,
-          method: "GET",
-        });
+		restaurant: async (_, args) => {
+			try {
+				const { data: restaurant } = await axios({
+					url: `http://localhost:3000/restaurants/${args._id}`,
+					method: "GET",
+				});
+				return restaurant;
+			} catch (error) {
+				console.log(error.response.data);
+			}
+		},
+		items: async () => {
+			try {
+				const { data: items } = await axios({
+					url: "http://localhost:3000/items",
+					method: "GET",
+				});
+				return items;
+			} catch (error) {
+				console.log(error.response.data);
+			}
+		},
+		itemsByRestaurantId: async (_, args) => {
+			try {
+				console.log(args);
+				const { data: itemsByRestaurantId } = await axios({
+					url: `http://localhost:3000/restaurants/${args._id}/items`,
+					method: "GET",
+				});
 
 				console.log("itemsByRestaurantId", itemsByRestaurantId);
 
@@ -233,7 +235,7 @@ const resolvers = {
 			}
 		},
 	},
-  Mutation: {
+	Mutation: {
     createOrder: async (_, args) => {
       try {
         console.log(args);
@@ -266,23 +268,40 @@ const resolvers = {
         console.log(error.response.data);
       }
     },
-    login: async (_, args) => {
-      try {
-        const { email, password } = args;
-        const { data: response } = await axios({
-          url: "http://localhost:3000/admin/login",
-          method: "POST",
-          data: {
-            email,
-            password,
-          },
-        });
-        return { status: response.status, access_token: response.access_token };
-      } catch (error) {
-        throw error;
-      }
-    },
-  },
+		login: async (_, args) => {
+			try {
+				const { email, password } = args;
+				const { data: response } = await axios({
+					url: "http://localhost:3000/admin/login",
+					method: "POST",
+					data: {
+						email,
+						password,
+					},
+				});
+				return { status: response.status, access_token: response.access_token };
+			} catch (error) {
+				throw error;
+			}
+		},
+		updateAvailability: async (_, args, context) => {
+			try {
+				const { data: response } = await axios({
+					url: `http://localhost:3000/restaurants/${args._id}`,
+					method: "PATCH",
+					data: {
+						availability: args.availability,
+					},
+					headers: {
+						access_token: context.access_token,
+					},
+				});
+				return { message: response };
+			} catch (err) {
+				console.log(err);
+			}
+		},
+	},
 };
 
 const server = new ApolloServer({
