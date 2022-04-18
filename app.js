@@ -95,6 +95,7 @@ const typeDefs = gql`
   type Mutation {
     createOrder(
       customerName: String
+      customerEmail: String
       customerPhoneNumber: String
       tableNumber: String
       totalPrice: Int
@@ -152,6 +153,7 @@ const resolvers = {
         });
 
         console.log("itemsByRestaurantId", itemsByRestaurantId);
+
         return itemsByRestaurantId.item;
       } catch (error) {
         console.log(error.response.data);
@@ -222,6 +224,7 @@ const resolvers = {
           },
         });
         return restaurant;
+
       } catch (error) {
         console.log(error.response.data);
       }
