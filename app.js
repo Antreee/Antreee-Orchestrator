@@ -1,7 +1,7 @@
-if (process.env.NODE_ENV !== "production") require("dotenv").config();
-const { ApolloServer, gql } = require("apollo-server");
-const axios = require("axios");
-const PORT = process.env.PORT || 4000;
+if (process.env.NODE_ENV !== 'production') require('dotenv').config()
+const { ApolloServer, gql } = require('apollo-server')
+const axios = require('axios')
+const PORT = process.env.PORT || 4000
 // const Redis = require("ioredis");
 // const redis = new Redis({
 //   port: process.env.REDIS_PORT,
@@ -56,6 +56,7 @@ const typeDefs = gql`
     totalPrice: Int
     bookingDate: String
     numberOfPeople: Int
+    restaurantId: String
     status: String
   }
   type FavouriteRestaurant {
@@ -97,27 +98,26 @@ const typeDefs = gql`
     userProfile(_id: String!): UserProfile
     getRestaurantByAdmin: [Restaurant]
   }
-  type Mutation {
-    createOrder(
-      customerName: String
-      customerEmail: String
-      customerPhoneNumber: String
-      tableNumber: String
-      totalPrice: Int
-      bookingDate: String
-      numberOfPeople: Int
-      orderDetails: OrderDetails
-    ): Info
-
-    login(email: String, password: String): MessageLogin
-  }
+	type Mutation {
+		createOrder(
+			customerName: String
+			customerEmail: String
+			customerPhoneNumber: String
+			tableNumber: String
+			totalPrice: Int
+			bookingDate: String
+			numberOfPeople: Int
+      restaurantId: String
+			orderDetails: OrderDetails
+		): Info
+		updateAvailability(available: String): Info
+		login(email: String, password: String): MessageLogin
+	}
 `;
 const resolvers = {
-  Query: {
+	Query: {
     restaurants: async (_, args) => {
       try {
-        console.log("masuk sini");
-        console.log(args.search);
         let { data: restaurants } = await axios({
           url: "http://localhost:3000/restaurants",
           method: "GET",
@@ -132,43 +132,40 @@ const resolvers = {
         }
         return restaurants;
       } catch (error) {
-        console.log(error.response.data);
+        console.log(error.response.data)
       }
     },
     restaurant: async (_, args) => {
       try {
         const { data: restaurant } = await axios({
           url: `http://localhost:3000/restaurants/${args._id}`,
-          method: "GET",
-        });
-        return restaurant;
+          method: 'GET',
+        })
+        return restaurant
       } catch (error) {
-        console.log(error.response.data);
+        console.log(error.response.data)
       }
     },
     items: async () => {
       try {
         const { data: items } = await axios({
-          url: "http://localhost:3000/items",
-          method: "GET",
-        });
-        return items;
+          url: 'http://localhost:3000/items',
+          method: 'GET',
+        })
+        return items
       } catch (error) {
-        console.log(error.response.data);
+        console.log(error.response.data)
       }
     },
     itemsByRestaurantId: async (_, args) => {
       try {
         const { data: itemsByRestaurantId } = await axios({
           url: `http://localhost:3000/restaurants/${args._id}/items`,
-          method: "GET",
-        });
-
-        console.log("itemsByRestaurantId", itemsByRestaurantId);
-
-        return itemsByRestaurantId.item;
+          method: 'GET',
+        })
+        return itemsByRestaurantId.item
       } catch (error) {
-        console.log(error.response.data);
+        console.log(error.response.data)
       }
     },
     orderDetails: async (_, args) => {
@@ -243,7 +240,6 @@ const resolvers = {
   Mutation: {
     createOrder: async (_, args) => {
       try {
-        console.log(args);
         const {
           customerName,
           customerPhoneNumber,
@@ -252,11 +248,12 @@ const resolvers = {
           totalPrice,
           bookingDate,
           numberOfPeople,
+          restaurantId,
           orderDetails,
-        } = args;
+        } = args
         const { data: response } = await axios({
-          url: "http://localhost:3000/customers/orders",
-          method: "POST",
+          url: 'http://localhost:3000/customers/orders',
+          method: 'POST',
           data: {
             customerName,
             customerPhoneNumber,
@@ -265,31 +262,50 @@ const resolvers = {
             totalPrice,
             bookingDate,
             numberOfPeople,
+            restaurantId,
             orderDetails: orderDetails.data,
           },
-        });
-        return { message: response };
+        })
+        return { message: response }
       } catch (error) {
-        console.log(error.response.data);
+        console.log(error.response.data)
       }
     },
-    login: async (_, args) => {
-      try {
-        const { email, password } = args;
-        const { data: response } = await axios({
-          url: "http://localhost:3000/admin/login",
-          method: "POST",
-          data: {
-            email,
-            password,
-          },
-        });
-        return { status: response.status, access_token: response.access_token };
-      } catch (error) {
-        throw error;
-      }
-    },
-  },
+
+		login: async (_, args) => {
+			try {
+				const { email, password } = args;
+				const { data: response } = await axios({
+					url: "http://localhost:3000/admin/login",
+					method: "POST",
+					data: {
+						email,
+						password,
+					},
+				});
+				return { status: response.status, access_token: response.access_token };
+			} catch (error) {
+				throw error;
+			}
+		},
+		updateAvailability: async (_, args, context) => {
+			try {
+				const { data: response } = await axios({
+					url: `http://localhost:3000/restaurants/${args._id}`,
+					method: "PATCH",
+					data: {
+						availability: args.availability,
+					},
+					headers: {
+						access_token: context.access_token,
+					},
+				});
+				return { message: response };
+			} catch (err) {
+				console.log(err);
+			}
+		},
+	},
 };
 
 const server = new ApolloServer({
@@ -297,7 +313,7 @@ const server = new ApolloServer({
   resolvers,
   context,
 });
-
 server.listen(PORT).then(({ url }) => {
   console.log(`🚀  Server ready at ${url}`);
 });
+
