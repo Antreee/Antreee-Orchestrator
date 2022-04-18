@@ -108,7 +108,7 @@ const typeDefs = gql`
 			numberOfPeople: Int
 			orderDetails: OrderDetails
 		): Info
-
+		updateAvailability(available: String): Info
 		login(email: String, password: String): MessageLogin
 	}
 `;
@@ -152,6 +152,7 @@ const resolvers = {
 		},
 		itemsByRestaurantId: async (_, args) => {
 			try {
+				console.log(args);
 				const { data: itemsByRestaurantId } = await axios({
 					url: `http://localhost:3000/restaurants/${args._id}/items`,
 					method: "GET",
@@ -279,6 +280,23 @@ const resolvers = {
 				return { status: response.status, access_token: response.access_token };
 			} catch (error) {
 				throw error;
+			}
+		},
+		updateAvailability: async (_, args, context) => {
+			try {
+				const { data: response } = await axios({
+					url: `http://localhost:3000/restaurants/${args._id}`,
+					method: "PATCH",
+					data: {
+						availability: args.availability,
+					},
+					headers: {
+						access_token: context.access_token,
+					},
+				});
+				return { message: response };
+			} catch (err) {
+				console.log(err);
 			}
 		},
 	},
