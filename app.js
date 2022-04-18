@@ -88,6 +88,7 @@ const typeDefs = gql`
     data: [InputDetail]
   }
   type Query {
+
     restaurants(stringCoordinates: String): [Restaurant]
     restaurant(_id: ID!): Restaurant
     items: [Item]
@@ -98,24 +99,25 @@ const typeDefs = gql`
     userProfile(_id: String!): UserProfile
     getRestaurantByAdmin: [Restaurant]
   }
-  type Mutation {
-    createOrder(
-      customerName: String
-      customerEmail: String
-      customerPhoneNumber: String
-      tableNumber: String
-      totalPrice: Int
-      bookingDate: String
-      numberOfPeople: Int
-      restaurantId: String
-      orderDetails: OrderDetails
-    ): Info
 
-    login(email: String, password: String): MessageLogin
-  }
-`
+	type Mutation {
+		createOrder(
+			customerName: String
+			customerEmail: String
+			customerPhoneNumber: String
+			tableNumber: String
+			totalPrice: Int
+			bookingDate: String
+			numberOfPeople: Int
+      restaurantId: String
+			orderDetails: OrderDetails
+		): Info
+		updateAvailability(available: String): Info
+		login(email: String, password: String): MessageLogin
+	}
+`;
 const resolvers = {
-  Query: {
+	Query: {
     restaurants: async (_, args) => {
       try {
         const { data: restaurants } = await axios({
@@ -233,6 +235,7 @@ const resolvers = {
     },
   },
   Mutation: {
+
     createOrder: async (_, args) => {
       try {
         const {
@@ -266,24 +269,42 @@ const resolvers = {
         console.log(error.response.data)
       }
     },
-    login: async (_, args) => {
-      try {
-        const { email, password } = args
-        const { data: response } = await axios({
-          url: 'http://localhost:3000/admin/login',
-          method: 'POST',
-          data: {
-            email,
-            password,
-          },
-        })
-        return { status: response.status, access_token: response.access_token }
-      } catch (error) {
-        throw error
-      }
-    },
-  },
-}
+
+		login: async (_, args) => {
+			try {
+				const { email, password } = args;
+				const { data: response } = await axios({
+					url: "http://localhost:3000/admin/login",
+					method: "POST",
+					data: {
+						email,
+						password,
+					},
+				});
+				return { status: response.status, access_token: response.access_token };
+			} catch (error) {
+				throw error;
+			}
+		},
+		updateAvailability: async (_, args, context) => {
+			try {
+				const { data: response } = await axios({
+					url: `http://localhost:3000/restaurants/${args._id}`,
+					method: "PATCH",
+					data: {
+						availability: args.availability,
+					},
+					headers: {
+						access_token: context.access_token,
+					},
+				});
+				return { message: response };
+			} catch (err) {
+				console.log(err);
+			}
+		},
+	},
+};
 
 const server = new ApolloServer({
   typeDefs,
