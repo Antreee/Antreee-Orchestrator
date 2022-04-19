@@ -239,6 +239,7 @@ const resolvers = {
   },
   Mutation: {
     createOrder: async (_, args) => {
+      console.log(args);
       try {
         const {
           customerName,
@@ -263,7 +264,7 @@ const resolvers = {
             bookingDate,
             numberOfPeople,
             restaurantId,
-            orderDetails: orderDetails.data,
+            orderDetails: orderDetails ? orderDetails.data : null
           },
         })
         return { message: response }
