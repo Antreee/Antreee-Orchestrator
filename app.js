@@ -54,8 +54,9 @@ const typeDefs = gql`
     restaurantId: String
     status: String
   }
-  type Info {
-    message: String
+  type CreateOrder {
+    url: String
+    orderId: String
   }
   type MessageLogin {
     status: String
@@ -67,6 +68,9 @@ const typeDefs = gql`
   }
   input OrderDetails {
     data: [InputDetail]
+  }
+  type Info {
+    message: String
   }
   type Query {
     restaurants(stringCoordinates: String, search: String): [Restaurant]
@@ -88,7 +92,7 @@ const typeDefs = gql`
       numberOfPeople: Int
       restaurantId: String
       orderDetails: OrderDetails
-    ): Info
+    ): CreateOrder
     updateAvailability(available: String): Info
     login(email: String, password: String): MessageLogin
   }
@@ -148,7 +152,6 @@ const resolvers = {
       }
     },
     getRestaurantByAdmin: async (_, args, context) => {
-      //kepake
       try {
         const { data: restaurant } = await axios({
           url: `http://localhost:3000/restaurants/admin`,
@@ -164,7 +167,6 @@ const resolvers = {
       }
     },
     getOrdersByRestaurantId: async (_, args, context) => {
-      //kepake
       try {
         const { data: getOrdersByRestaurantId } = await axios({
           url: `http://localhost:3000/restaurants/${args._id}/orders`,
@@ -180,7 +182,6 @@ const resolvers = {
       }
     },
     getBookedByRestaurantId: async (_, args, context) => {
-      //kepake
       try {
         const { data: getBookedByRestaurantId } = await axios({
           url: `http://localhost:3000/restaurants/${args._id}/booked`,
@@ -226,14 +227,13 @@ const resolvers = {
             orderDetails: orderDetails ? orderDetails.data : null,
           },
         });
-        return { message: response };
+        return response;
       } catch (error) {
         console.log(error.response.data);
       }
     },
 
     login: async (_, args) => {
-      //kepake
       try {
         const { email, password } = args;
         const { data: response } = await axios({
