@@ -1,7 +1,7 @@
-if (process.env.NODE_ENV !== 'production') require('dotenv').config()
-const { ApolloServer, gql } = require('apollo-server')
-const axios = require('axios')
-const PORT = process.env.PORT || 4000
+if (process.env.NODE_ENV !== "production") require("dotenv").config();
+const { ApolloServer, gql } = require("apollo-server");
+const axios = require("axios");
+const PORT = process.env.PORT || 4000;
 // const Redis = require("ioredis");
 // const redis = new Redis({
 //   port: process.env.REDIS_PORT,
@@ -97,25 +97,27 @@ const typeDefs = gql`
     favourites(customerId: String!): [FavouriteRestaurant]
     userProfile(_id: String!): UserProfile
     getRestaurantByAdmin: [Restaurant]
+    getOrdersByRestaurantId(_id: ID!): [Order]
+    getBookedByRestaurantId(_id: ID!): [Order]
   }
-	type Mutation {
-		createOrder(
-			customerName: String
-			customerEmail: String
-			customerPhoneNumber: String
-			tableNumber: String
-			totalPrice: Int
-			bookingDate: String
-			numberOfPeople: Int
+  type Mutation {
+    createOrder(
+      customerName: String
+      customerEmail: String
+      customerPhoneNumber: String
+      tableNumber: String
+      totalPrice: Int
+      bookingDate: String
+      numberOfPeople: Int
       restaurantId: String
-			orderDetails: OrderDetails
-		): Info
-		updateAvailability(available: String): Info
-		login(email: String, password: String): MessageLogin
-	}
+      orderDetails: OrderDetails
+    ): Info
+    updateAvailability(available: String): Info
+    login(email: String, password: String): MessageLogin
+  }
 `;
 const resolvers = {
-	Query: {
+  Query: {
     restaurants: async (_, args) => {
       try {
         let { data: restaurants } = await axios({
@@ -127,45 +129,46 @@ const resolvers = {
         });
         if (args.search) {
           restaurants = restaurants.filter(
-            (el) => el.name.toLowerCase().indexOf(args.search.toLowerCase()) > -1
+            (el) =>
+              el.name.toLowerCase().indexOf(args.search.toLowerCase()) > -1
           );
         }
         return restaurants;
       } catch (error) {
-        console.log(error.response.data)
+        console.log(error.response.data);
       }
     },
     restaurant: async (_, args) => {
       try {
         const { data: restaurant } = await axios({
           url: `http://localhost:3000/restaurants/${args._id}`,
-          method: 'GET',
-        })
-        return restaurant
+          method: "GET",
+        });
+        return restaurant;
       } catch (error) {
-        console.log(error.response.data)
+        console.log(error.response.data);
       }
     },
     items: async () => {
       try {
         const { data: items } = await axios({
-          url: 'http://localhost:3000/items',
-          method: 'GET',
-        })
-        return items
+          url: "http://localhost:3000/items",
+          method: "GET",
+        });
+        return items;
       } catch (error) {
-        console.log(error.response.data)
+        console.log(error.response.data);
       }
     },
     itemsByRestaurantId: async (_, args) => {
       try {
         const { data: itemsByRestaurantId } = await axios({
           url: `http://localhost:3000/restaurants/${args._id}/items`,
-          method: 'GET',
-        })
-        return itemsByRestaurantId.item
+          method: "GET",
+        });
+        return itemsByRestaurantId.item;
       } catch (error) {
-        console.log(error.response.data)
+        console.log(error.response.data);
       }
     },
     orderDetails: async (_, args) => {
@@ -223,7 +226,6 @@ const resolvers = {
     },
     getRestaurantByAdmin: async (_, args, context) => {
       try {
-        console.log(context);
         const { data: restaurant } = await axios({
           url: `http://localhost:3000/restaurants/admin`,
           method: "GET",
@@ -231,9 +233,40 @@ const resolvers = {
             access_token: context.access_token,
           },
         });
+
         return restaurant;
       } catch (error) {
         console.log(error.response.data);
+      }
+    },
+    getOrdersByRestaurantId: async (_, args, context) => {
+      try {
+        const { data: getOrdersByRestaurantId } = await axios({
+          url: `http://localhost:3000/restaurants/${args._id}/orders`,
+          method: "GET",
+          headers: {
+            access_token: context.access_token,
+          },
+        });
+
+        return getOrdersByRestaurantId.orders;
+      } catch (error) {
+        console.log(error.response.data);
+      }
+    },
+    getBookedByRestaurantId: async (_, args, context) => {
+      try {
+        const { data: getBookedByRestaurantId } = await axios({
+          url: `http://localhost:3000/restaurants/${args._id}/booked`,
+          method: "GET",
+          headers: {
+            access_token: context.access_token,
+          },
+        });
+
+        return getBookedByRestaurantId.booked;
+      } catch (error) {
+        console.log(error);
       }
     },
   },
@@ -251,10 +284,10 @@ const resolvers = {
           numberOfPeople,
           restaurantId,
           orderDetails,
-        } = args
+        } = args;
         const { data: response } = await axios({
-          url: 'http://localhost:3000/customers/orders',
-          method: 'POST',
+          url: "http://localhost:3000/customers/orders",
+          method: "POST",
           data: {
             customerName,
             customerPhoneNumber,
@@ -264,49 +297,49 @@ const resolvers = {
             bookingDate,
             numberOfPeople,
             restaurantId,
-            orderDetails: orderDetails ? orderDetails.data : null
+            orderDetails: orderDetails ? orderDetails.data : null,
           },
-        })
-        return { message: response }
+        });
+        return { message: response };
       } catch (error) {
-        console.log(error.response.data)
+        console.log(error.response.data);
       }
     },
 
-		login: async (_, args) => {
-			try {
-				const { email, password } = args;
-				const { data: response } = await axios({
-					url: "http://localhost:3000/admin/login",
-					method: "POST",
-					data: {
-						email,
-						password,
-					},
-				});
-				return { status: response.status, access_token: response.access_token };
-			} catch (error) {
-				throw error;
-			}
-		},
-		updateAvailability: async (_, args, context) => {
-			try {
-				const { data: response } = await axios({
-					url: `http://localhost:3000/restaurants/${args._id}`,
-					method: "PATCH",
-					data: {
-						availability: args.availability,
-					},
-					headers: {
-						access_token: context.access_token,
-					},
-				});
-				return { message: response };
-			} catch (err) {
-				console.log(err);
-			}
-		},
-	},
+    login: async (_, args) => {
+      try {
+        const { email, password } = args;
+        const { data: response } = await axios({
+          url: "http://localhost:3000/admin/login",
+          method: "POST",
+          data: {
+            email,
+            password,
+          },
+        });
+        return { status: response.status, access_token: response.access_token };
+      } catch (error) {
+        throw error;
+      }
+    },
+    updateAvailability: async (_, args, context) => {
+      try {
+        const { data: response } = await axios({
+          url: `http://localhost:3000/restaurants/${args._id}`,
+          method: "PATCH",
+          data: {
+            availability: args.availability,
+          },
+          headers: {
+            access_token: context.access_token,
+          },
+        });
+        return { message: response };
+      } catch (err) {
+        console.log(err);
+      }
+    },
+  },
 };
 
 const server = new ApolloServer({
@@ -317,4 +350,3 @@ const server = new ApolloServer({
 server.listen(PORT).then(({ url }) => {
   console.log(`🚀  Server ready at ${url}`);
 });
-
