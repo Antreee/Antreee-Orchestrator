@@ -42,36 +42,17 @@ const typeDefs = gql`
     imageUrl: String
     description: String
   }
-  type OrderDetail {
-    _id: String
-    orderId: String
-    foodId: String
-    quantity: Int
-  }
   type Order {
     _id: String
     customerName: String
     customerPhoneNumber: String
+    customerEmail: String
     tableNumber: String
     totalPrice: Int
     bookingDate: String
     numberOfPeople: Int
     restaurantId: String
     status: String
-  }
-  type FavouriteRestaurant {
-    id: ID
-    customerId: String
-    restaurantId: String
-  }
-  type UserProfile {
-    _id: String
-    fullName: String
-    email: String
-    password: String
-    phoneNumber: String
-    profilePicture: String
-    role: String
   }
   type Info {
     message: String
@@ -90,12 +71,8 @@ const typeDefs = gql`
   type Query {
     restaurants(stringCoordinates: String, search: String): [Restaurant]
     restaurant(_id: ID!): Restaurant
-    items: [Item]
     itemsByRestaurantId(_id: ID!): [Item]
-    orderDetails(orderId: String!): [OrderDetail]
-    orders(customerName: String!): [Order]
-    favourites(customerId: String!): [FavouriteRestaurant]
-    userProfile(_id: String!): UserProfile
+    orderById(_id: ID!): Order
     getRestaurantByAdmin: [Restaurant]
     getOrdersByRestaurantId(_id: ID!): [Order]
     getBookedByRestaurantId(_id: ID!): [Order]
@@ -129,8 +106,7 @@ const resolvers = {
         });
         if (args.search) {
           restaurants = restaurants.filter(
-            (el) =>
-              el.name.toLowerCase().indexOf(args.search.toLowerCase()) > -1
+            (el) => el.name.toLowerCase().indexOf(args.search.toLowerCase()) > -1
           );
         }
         return restaurants;
@@ -149,17 +125,6 @@ const resolvers = {
         console.log(error.response.data);
       }
     },
-    items: async () => {
-      try {
-        const { data: items } = await axios({
-          url: "http://localhost:3000/items",
-          method: "GET",
-        });
-        return items;
-      } catch (error) {
-        console.log(error.response.data);
-      }
-    },
     itemsByRestaurantId: async (_, args) => {
       try {
         const { data: itemsByRestaurantId } = await axios({
@@ -171,60 +136,19 @@ const resolvers = {
         console.log(error.response.data);
       }
     },
-    orderDetails: async (_, args) => {
+    orderById: async (_, args) => {
       try {
-        const { data: orderDetails } = await axios({
-          url: "http://localhost:3000/orderDetails",
-          method: "GET",
-          params: {
-            orderId: args.orderId,
-          },
-        });
-        return orderDetails;
-      } catch (error) {
-        console.log(error.response.data);
-      }
-    },
-    orders: async (_, args) => {
-      try {
-        const { data: orders } = await axios({
-          url: "http://localhost:3000/orders",
-          method: "GET",
-          params: {
-            customerName: args.customerName,
-          },
-        });
-        return orders;
-      } catch (error) {
-        console.log(error.response.data);
-      }
-    },
-    favourites: async (_, args) => {
-      try {
-        const { data: favourites } = await axios({
-          url: "http://localhost:3000/favouriteRestaurants",
-          method: "GET",
-          params: {
-            customerId: args.customerId,
-          },
-        });
-        return favourites;
-      } catch (error) {
-        console.log(error.response.data);
-      }
-    },
-    userProfile: async (_, args) => {
-      try {
-        const { data: userProfile } = await axios({
-          url: `http://localhost:3000/userProfiles/${args._id}`,
+        const { data: order } = await axios({
+          url: `http://localhost:3000/orders/${args._id}`,
           method: "GET",
         });
-        return userProfile;
+        return order;
       } catch (error) {
         console.log(error.response.data);
       }
     },
     getRestaurantByAdmin: async (_, args, context) => {
+      //kepake
       try {
         const { data: restaurant } = await axios({
           url: `http://localhost:3000/restaurants/admin`,
@@ -240,6 +164,7 @@ const resolvers = {
       }
     },
     getOrdersByRestaurantId: async (_, args, context) => {
+      //kepake
       try {
         const { data: getOrdersByRestaurantId } = await axios({
           url: `http://localhost:3000/restaurants/${args._id}/orders`,
@@ -255,6 +180,7 @@ const resolvers = {
       }
     },
     getBookedByRestaurantId: async (_, args, context) => {
+      //kepake
       try {
         const { data: getBookedByRestaurantId } = await axios({
           url: `http://localhost:3000/restaurants/${args._id}/booked`,
@@ -307,6 +233,7 @@ const resolvers = {
     },
 
     login: async (_, args) => {
+      //kepake
       try {
         const { email, password } = args;
         const { data: response } = await axios({
