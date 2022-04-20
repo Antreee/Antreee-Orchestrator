@@ -93,7 +93,7 @@ const typeDefs = gql`
       restaurantId: String
       orderDetails: OrderDetails
     ): CreateOrder
-    updateAvailability(available: String): Info
+    updateAvailability(_id: ID!, available: Boolean): Info
     login(email: String, password: String): MessageLogin
   }
 `;
@@ -251,17 +251,19 @@ const resolvers = {
     },
     updateAvailability: async (_, args, context) => {
       try {
+        console.log(args);
         const { data: response } = await axios({
           url: `http://localhost:3000/restaurants/${args._id}`,
           method: "PATCH",
           data: {
-            availability: args.availability,
+            available: args.available,
           },
           headers: {
-            access_token: context.access_token,
-          },
+            access_token: context.access_token
+          }
         });
-        return { message: response };
+        console.log(response);
+        return { message: response.message };
       } catch (err) {
         console.log(err);
       }
