@@ -1,0 +1,142 @@
+{
+  "restaurants": [
+    {
+      "_id": "6256f18d33f3f3275e483143",
+      "name": "Restaurant 1",
+      "logoUrl": "Logo",
+      "cuisine": ["cuisine 1", "cuisine 2"],
+      "address": "address 1",
+      "contactNumber": "contactNumber 1",
+      "location": {
+        "type": "Point",
+        "coordinates": [98.62546494915908, 3.567298860693729]
+      },
+      "available": true,
+      "capacity": 50,
+      "mainImagesUrl": ["image 1", "image 2"],
+      "adminId": 2
+    },
+    {
+      "_id": "6257ce1924de24be821e45a0",
+      "name": "Restaurant 2",
+      "logoUrl": "Logo",
+      "cuisine": ["cuisine 1", "cuisine 2"],
+      "address": "address 2",
+      "contactNumber": "contactNumber 2",
+      "location": {
+        "type": "Point",
+        "coordinates": [98.62546494915908, 3.567298860693729]
+      },
+      "available": true,
+      "capacity": 50,
+      "mainImagesUrl": ["image 1", "image 2"],
+      "adminId": 2
+    }
+  ],
+  "items": [
+    {
+      "_id": "6256f69525b943c1124721c0",
+      "restaurant_Id": "6256f18d33f3f3275e483143",
+      "name": "food 1",
+      "category": "category 1",
+      "price": 10000,
+      "imageUrl": "food image 1",
+      "description": "description 1"
+    },
+    {
+      "_id": "6257090a69627e5b51c559a6",
+      "restaurant_Id": "6256f18d33f3f3275e483143",
+      "name": "food 2",
+      "category": "category 1",
+      "price": 10000,
+      "imageUrl": "food image 1",
+      "description": "description 2"
+    },
+    {
+      "_id": "625709c7e1d11c1aefc36803",
+      "restaurant_Id": "6257ce1924de24be821e45a0",
+      "name": "food 3",
+      "category": "category 2",
+      "price": 100000,
+      "imageUrl": "food image 1",
+      "description": "description 3"
+    },
+    {
+      "_id": "6257ce2524de24be821e45a2",
+      "restaurant_Id": "6257ce1924de24be821e45a0",
+      "name": "food 4",
+      "category": "category 2",
+      "price": 50000,
+      "imageUrl": "food image 1",
+      "description": "description 4"
+    }
+  ],
+  "orderDetails": [
+    {
+      "_id": "62585778b3657aad7027a48c",
+      "orderId": "625833b05b57a01a6c9cc2ad",
+      "foodId": "6256f69525b943c1124721c0",
+      "quantity": 3
+    },
+    {
+      "_id": "62585778b3657aad7027a48b",
+      "orderId": "62583422c171f380c976e251",
+      "foodId": "625709c7e1d11c1aefc36803",
+      "quantity": 2
+    }
+  ],
+  "orders": [
+    {
+      "_id": "625833b05b57a01a6c9cc2ad",
+      "customerName": "customer 1",
+      "customerPhoneNumber": "081234562435",
+      "tableNumber": "table 1",
+      "totalPrice": 50000,
+      "bookingDate": "2022-04-14",
+      "numberOfPeople": 4,
+      "status": "Paid"
+    },
+    {
+      "_id": "62583422c171f380c976e251",
+      "customerName": "customer 2",
+      "customerPhoneNumber": "081234562435",
+      "tableNumber": "table 2",
+      "totalPrice": 250000,
+      "bookingDate": "2022-04-15",
+      "numberOfPeople": 6,
+      "status": "Booked"
+    }
+  ],
+  "favouriteRestaurants": [
+    {
+      "id": 1,
+      "customerId": "6747456h4bhbhdf7345y374",
+      "restaurantId": 1
+    },
+    {
+      "id": 2,
+      "customerId": "6747456h4bhbhdf7345y374",
+      "restaurantId": 2
+    }
+  ],
+  "userProfiles": [
+    {
+      "_id": "6747456h4bhbhdf7345y374",
+      "fullName": "customer 1",
+      "email": "customer1@mail.com",
+      "password": "123456",
+      "phoneNumber": "092536473819",
+      "profilePicture": "picture 1",
+      "role": "Customer"
+    },
+    {
+      "_id": "625918b7fe08008bfe451aae",
+      "fullName": "Admin 1",
+      "email": "Admin1@mail.com",
+      "password": "123456",
+      "phoneNumber": "092536473819",
+      "profilePicture": "picture 1",
+      "role": "Admin"
+    }
+  ]
+}
